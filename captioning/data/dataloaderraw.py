@@ -36,7 +36,10 @@ class DataLoaderRaw():
         self.my_resnet = getattr(resnet, self.cnn_model)()
         self.my_resnet.load_state_dict(torch.load('./data/imagenet_weights/'+self.cnn_model+'.pth'))
         self.my_resnet = myResnet(self.my_resnet)
-        self.my_resnet.cuda()
+        if self.opt["device"] == "cpu":
+            self.my_resnet
+        else:
+            self.my_resnet.cuda()
         self.my_resnet.eval()
 
 
@@ -110,7 +113,10 @@ class DataLoaderRaw():
                 img = np.concatenate((img, img, img), axis=2)
 
             img = img[:,:,:3].astype('float32')/255.0
-            img = torch.from_numpy(img.transpose([2,0,1])).cuda()
+            if self.opt["device"] == "cpu":
+                img = torch.from_numpy(img.transpose([2,0,1]))
+            else:
+                img = torch.from_numpy(img.transpose([2,0,1])).cuda()
             img = preprocess(img)
             with torch.no_grad():
                 tmp_fc, tmp_att = self.my_resnet(img)
