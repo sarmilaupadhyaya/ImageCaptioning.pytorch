@@ -267,7 +267,7 @@ def parse_opt():
     return args
 
 
-def add_eval_options(parser):
+def add_eval_options(function_map, parser):
     # Basic options
     parser.add_argument('--batch_size', type=int, default=0,
                     help='if > 0 then overrule, otherwise load from checkpoint.')
@@ -312,16 +312,18 @@ def add_eval_options(parser):
                     help='if we need to print out all beam search beams.')
     parser.add_argument('--verbose_loss', type=int, default=0, 
                     help='If calculate loss using ground truth during evaluation')
-
-def add_diversity_opts(parser):
+    return {**vars(parser.parse_args()), **function_map}
+    
+def add_diversity_opts(function_map, parser):
     parser.add_argument('--sample_n', type=int, default=1,
                     help='Diverse sampling')
     parser.add_argument('--sample_n_method', type=str, default='sample',
                     help='sample, bs, dbs, gumbel, topk, dgreedy, dsample, dtopk, dtopp')
     parser.add_argument('--eval_oracle', type=int, default=1, 
                     help='if we need to calculate loss.')
-
-
+    
+    return {**vars(parser.parse_args()), **function_map}
+  
 # Sampling related options
 def add_eval_sample_opts(parser):
     parser.add_argument('--sample_method', type=str, default='greedy',
@@ -347,7 +349,7 @@ def add_eval_sample_opts(parser):
     parser.add_argument('--suppress_UNK', type=int, default=1,
                     help='Not predicting UNK')
 
-
+    
 if __name__ == '__main__':
     import sys
     sys.argv = [sys.argv[0]]
