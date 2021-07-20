@@ -24,22 +24,10 @@ class Namespace:
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
 
+
 def evaluation(model='',cnn_model='resnet101',image_folder="", infos_path='', only_lang_eval=0, force=0,device="cpu"):
-    # Input arguments and options
-    parser = argparse.ArgumentParser()
-    # Input paths
-    #parser.add_argument('--model', type=str, default='',
-    #            help='path to model to evaluate')
-    #parser.add_argument('--cnn_model', type=str,  default='resnet101',
-    #            help='resnet101, resnet152')
-    #parser.add_argument('--infos_path', type=str, default='',
-    #            help='path to infos to evaluate')
-    #parser.add_argument('--only_lang_eval', type=int, default=0,
-    #            help='lang eval on saved results')
-    #parser.add_argument('--force', type=int, default=0,
-    #            help='force to evaluate no matter if there are results available')
-    #parser.add_argument('--device', type=str, default='cuda',
-    #            help='cpu or cuda')
+    parser = argparse.ArgumentParser()      
+
     function_map = {"model":model, "cnn_model":cnn_model, "infos_path":infos_path, "only_lang_eval":only_lang_eval, "force":force, "device":device, "image_folder":image_folder}
     function_map = opts.add_eval_options(function_map, parser)
     function_map= opts.add_diversity_opts(function_map, parser)
@@ -69,7 +57,6 @@ def evaluation(model='',cnn_model='resnet101',image_folder="", infos_path='', on
         if not opt.force:
             try:
                 if os.path.isfile(result_fn):
-                    print(result_fn)
                     json.load(open(result_fn, 'r'))
                     print('already evaluated')
                     os._exit(0)
@@ -78,7 +65,6 @@ def evaluation(model='',cnn_model='resnet101',image_folder="", infos_path='', on
 
         predictions, n_predictions = torch.load(pred_fn)
         lang_stats = eval_utils.language_eval(opt.input_json, predictions, n_predictions, vars(opt), opt.split)
-        print(lang_stats)
         os._exit(0)
 
     # At this point only_lang_eval if 0
@@ -122,15 +108,7 @@ def evaluation(model='',cnn_model='resnet101',image_folder="", infos_path='', on
     loss, split_predictions, lang_stats = eval_utils.eval_split(model, crit, loader, 
         vars(opt))
 
-    #print('loss: ', loss)
-    #if lang_stats:
-    #    print(lang_stats)
-
-    #if opt.dump_json == 1:
-        # dump the json
-
-    #    json.dump(split_predictions, open('imagecaptioning/vis/vis.json', 'w'))
-    return split_predictions[0]["caption"]
+    return split_predictions
 
         
 
