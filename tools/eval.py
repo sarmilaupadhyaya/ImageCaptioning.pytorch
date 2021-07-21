@@ -8,6 +8,9 @@ import numpy as np
 import time
 import os
 from six.moves import cPickle
+import sys
+
+sys.path.append("imagecaptioning/")
 
 import captioning.utils.opts as opts
 import captioning.models as models
